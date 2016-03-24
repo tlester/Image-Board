@@ -3,7 +3,7 @@
 # a successful test, as we are passing 6 and 2 and getting 8 back
 # but also a failure, as we'll purposely check a wrong value
 
-from catalog import app
+from application import app
 
 import os
 import json
