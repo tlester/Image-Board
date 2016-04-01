@@ -22,16 +22,15 @@ class Image(Base):
 class Tags(Base):
     __tablename__ = 'tags'
 
-    tag = Column(String(80), nullable=False)
+    tag = Column(String(80), primary_key=True, nullable=False)
     id = Column(Integer, primary_key=True)
-    image_id = Column(Integer, ForeignKey('image.id'))
-    image = relationship(Image)
 
-#class TagLookup(Base):
-#    __tablename__ = 'tag_lookup'
-#
-#    tag_id = Column(Interger, ForeignKey('tag.id'), nullable=False)
-#    image_id = Column(Interger, ForiegnKey('image.id'), nullable=False)
+class TagLookup(Base):
+    __tablename__ = 'tag_lookup'
+
+    id = Column(Integer, primary_key=True)
+    tag_id = Column(Integer, ForeignKey('tags.id'), nullable=False)
+    image_id = Column(Integer, ForeignKey('image.id'), nullable=False)
 
 
 
