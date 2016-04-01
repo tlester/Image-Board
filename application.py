@@ -25,27 +25,29 @@ session = DBSession()
 
 app = Flask(__name__)
 
+#@app.route('/images/<int:image_id>/')
 @app.route('/')
-@app.route('/images/<int:image_id>/')
-def Home(image_id):
+@app.route('/images/')
+def home():
     """ Main landing page for catalog app
     """
 
-    image = session.query(Image).filter_by(id = image_id).one()
-    tags = session.query(Tags).filter_by(image_id=image.id).all()
-    output = ''
-    output = image.name
-    output += '<br />'
-    output += image.link
-    output += '<br />'
-    output += image.description
-    output += '<br />'
-    output += '<ul>'
-    for tag in tags:
-        output += '<li>{}</li>'.format(tag.tag)
-    output+= '</ul>'
+    images = session.query(Image).all()
+    #tags = session.query(Tags).filter_by(image_id=image.id).all()
+    return render_template('home.html', images=images)
 
-    return output
+@app.route('/images/new', methods=['GET', 'POST'])
+def newImage():
+    """ Create new image
+    """
+    if request.method == 'POST':
+        new_image = Image(name = request.form['image_name'],
+                          link = request.form['image_url'],
+                          description = request.form['image_description'])
+        session.add(new_image)
+        session.commit()
+        return redirect(url_for('home'))
+    return render_template('new_image.html')
 
 
 if __name__ == '__main__':

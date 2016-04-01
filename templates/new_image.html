@@ -1,0 +1,24 @@
+{% extends "base_layout.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+  <div class="col-md-4 col-md-offset-4">
+  <h1>Create New Image</h1>
+
+  <form action="{{ url_for('newImage') }}" method="POST">
+  <fieldset class="form-group">
+    <label for="image_name">Image Name</label>
+    <input type="text" class="form-control" name="image_name" placeholder="Image Name">
+  </fieldset>
+  <fieldset class="form-group">
+    <label for="image_url">Image URL</label>
+    <input type="text" class="form-control" name="image_url" placeholder="Image URL">
+  </fieldset>
+  <fieldset class="form-group">
+    <label for="image_description">Description</label>
+    <textarea class="form-control" name="image_description" rows="3"></textarea>
+  </fieldset>
+  <button type="submit" value="Create" class="btn btn-primary">Submit</button>
+</form>
+</div>
+
+{% endblock %}
