@@ -40,9 +40,10 @@
 	"buffers":
 	[
 		{
+			"file": "tests/test_app.py",
 			"settings":
 			{
-				"buffer_size": 0,
+				"buffer_size": 911,
 				"line_ending": "Unix"
 			}
 		}
@@ -54,10 +55,14 @@
 	"build_varint": "",
 	"command_palette":
 	{
-		"height": 187.0,
-		"last_filter": "mark",
+		"height": 392.0,
+		"last_filter": ":w",
 		"selected_items":
 		[
+			[
+				":w",
+				":w - Save"
+			],
 			[
 				"mark",
 				"GitHub Flavored Markdown: Preview"
@@ -65,10 +70,6 @@
 			[
 				"insta",
 				"Package Control: Install Package"
-			],
-			[
-				":w",
-				":w - Save"
 			],
 			[
 				"git push",
@@ -120,10 +121,15 @@
 	},
 	"expanded_folders":
 	[
-		"/Users/tlester/projects/catalog"
+		"/Users/tlester/projects/catalog",
+		"/Users/tlester/projects/catalog/tests"
 	],
 	"file_history":
 	[
+		"/Users/tlester/projects/catalog/application.py",
+		"/Users/tlester/projects/catalog/catalog.py",
+		"/Users/tlester/projects/catalog/tests/test_app.py",
+		"/Users/tlester/projects/catalog/app.py",
 		"/Users/tlester/projects/oauth/project.py",
 		"/Users/tlester/projects/oauth/templates/login.html",
 		"/Users/tlester/projects/oauth/client_secrets.json",
@@ -194,15 +200,21 @@
 	"groups":
 	[
 		{
+			"sheets":
+			[
+			]
+		},
+		{
 			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"semi_transient": false,
+					"file": "tests/test_app.py",
+					"semi_transient": true,
 					"settings":
 					{
-						"buffer_size": 0,
+						"buffer_size": 911,
 						"regions":
 						{
 						},
@@ -215,7 +227,9 @@
 						],
 						"settings":
 						{
-							"syntax": "Packages/Text/Plain text.tmLanguage"
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -244,11 +258,18 @@
 				0,
 				1,
 				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
 			]
 		],
 		"cols":
 		[
 			0.0,
+			0.5,
 			1.0
 		],
 		"rows":
