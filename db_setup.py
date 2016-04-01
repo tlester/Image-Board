@@ -27,6 +27,13 @@ class Tags(Base):
     image_id = Column(Integer, ForeignKey('image.id'))
     image = relationship(Image)
 
+#class TagLookup(Base):
+#    __tablename__ = 'tag_lookup'
+#
+#    tag_id = Column(Interger, ForeignKey('tag.id'), nullable=False)
+#    image_id = Column(Interger, ForiegnKey('image.id'), nullable=False)
+
+
 
 # We added this serialize function to be able to send JSON objects in a
 # serializable format
@@ -42,8 +49,8 @@ class Tags(Base):
 #        }
 
 
-engine = create_engine('sqlite:///application.db')
-#engine = create_engine('postgresql://vagrant@localhost/catalog')
+#engine = create_engine('sqlite:///application.db')
+engine = create_engine('postgresql:///catalog')
 
 
 Base.metadata.create_all(engine)

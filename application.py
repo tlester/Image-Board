@@ -16,8 +16,8 @@ from flask import make_response
 import requests
 
 # Connect to Database and create database session
-engine = create_engine('sqlite:///application.db')
-#engine = create_engine('postgresql://vagrant@localhost/catalog')
+#engine = create_engine('sqlite:///application.db')
+engine = create_engine('postgresql:///catalog')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
