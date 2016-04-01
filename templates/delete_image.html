@@ -1,0 +1,19 @@
+{% extends "base_layout.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<div class="container">
+  <h1>Are you sure you want to delete:</h1>
+  <h1>"{{image.name}}"</h1>
+  <span class="pull-right">
+  <form action="{{ url_for('deleteImage', image_id=image.id) }}" method="POST">
+  <button type="submit" value="Create" class="btn btn-danger">Delete</button>
+  <a href="{{ url_for('image', image_id=image.id) }}"><button type="button" class="btn btn-ok">Cancel</button></a>
+</form></span>
+
+<img src="{{image.link}}" class="img-responsive medium"/><br />
+<p>{{image.description}}</p>
+</div>
+
+
+{% endblock %}

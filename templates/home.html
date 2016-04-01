@@ -4,8 +4,8 @@
 
   {% for image in images %}
     <div class="col-md-4">
-    <h1>{{image.name}}</h1>
-    <img src="{{image.link}}" class="img-thumbnail medium" /><br />
+    <a href="{{ url_for('image', image_id=image.id)}}"><img src="{{image.link}}" class="medium" /></a><br />
+    <h4>{{image.name}}</h4>
     <p>{{image.description}}</p>
     <br />
     </div>

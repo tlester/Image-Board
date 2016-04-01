@@ -27,7 +27,6 @@ app = Flask(__name__)
 
 #@app.route('/images/<int:image_id>/')
 @app.route('/')
-@app.route('/images/')
 def home():
     """ Main landing page for catalog app
     """
@@ -35,6 +34,29 @@ def home():
     images = session.query(Image).all()
     #tags = session.query(Tags).filter_by(image_id=image.id).all()
     return render_template('home.html', images=images)
+
+@app.route('/image/<int:image_id>/')
+def image(image_id):
+    """ Main page for an individual image
+    """
+
+    image = session.query(Image).filter_by(id = image_id).one()
+    tags = session.query(Tags).filter_by(image_id=image_id).all()
+    return render_template('image.html', image=image, tags=tags)
+
+@app.route('/image/<int:image_id>/delete', methods=['GET', 'POST'])
+def deleteImage(image_id):
+    """ Prompt to delete an image
+    """
+
+    image = session.query(Image).filter_by(id = image_id).one()
+    if request.method == 'POST':
+        session.delete(image)
+        session.commit()
+        return redirect(url_for('home'))
+
+    return render_template('delete_image.html', image=image)
+
 
 @app.route('/images/new', methods=['GET', 'POST'])
 def newImage():
@@ -44,6 +66,8 @@ def newImage():
         new_image = Image(name = request.form['image_name'],
                           link = request.form['image_url'],
                           description = request.form['image_description'])
+        tags = request.form['tags'].split(',')
+
         session.add(new_image)
         session.commit()
         return redirect(url_for('home'))

@@ -1,0 +1,25 @@
+{% extends "base_layout.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<div class="container">
+  <img src="{{image.link}}" class="img-responsive img-thumbnail"/>
+  <h1>{{image.name}}</h1>
+  <div class="row">
+  <span class="col-md-6">
+    <p>{{image.description}}</p>
+  </span>
+  <span class="col-md-6">
+   <a href="{{ url_for('deleteImage', image_id=image.id) }}"><button type="button" class="btn btn-danger col-md-2 pull-right">Delete</button></a>
+  </span>
+  </div>
+  <h3>Tags:</h3>
+  <ul>
+  {% for tag in tags %}
+  <li>{{tag.tag}}</li>
+  {% endfor %}
+  </ul>
+</div>
+
+
+{% endblock %}
