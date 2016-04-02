@@ -64,12 +64,43 @@ def image(image_id):
     return render_template('image.html', image=image, tags=tags)
 
 
-@app.route('/images/<int:image_id>/edit')
+@app.route('/images/<int:image_id>/edit', methods=['GET', 'POST'])
 def editImage(image_id):
     """ Page for editing an image
     """
 
-    return 'Edit image# {}'.format(image_id)
+    image = session.query(Image).filter_by(id = image_id).one()
+    existing_tags = []
+    for tag in image.tags:
+        existing_tags.append(tag.tag)
+    tags = ', '.join(existing_tags)
+
+    if request.method == 'POST':
+        updated_image = Image(id = image.id,
+                             name = request.form['image_name'],
+                             link = request.form['image_url'],
+                             description = request.form['image_description'])
+        session.update(updated_image)
+        session.commit()
+
+        updated_image.tags.delete()
+
+        tags = request.form['tags'].split(',')
+        for tag in tags:
+            tag = tag.strip().lower()
+            try:
+                tag = session.query(Tags).filter_by(tag = tag).one()
+            except:
+                print 'Adding tag {}'.format(tag)
+                tag = Tags(tag = tag)
+                session.add(tag)
+                session.commit()
+            updated_image.tags.append(tag)
+            session.commit()
+
+        return redirect(url_for('image', image=image))
+    return render_template('edit_image.html', image=image, tags=tags)
+
 
 @app.route('/image/<int:image_id>/delete', methods=['GET', 'POST'])
 def deleteImage(image_id):
@@ -89,6 +120,7 @@ def deleteImage(image_id):
 def newImage():
     """ Create new image
     """
+
     if request.method == 'POST':
         new_image = Image(name = request.form['image_name'],
                           link = request.form['image_url'],
