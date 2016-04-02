@@ -4,7 +4,7 @@ from flask import request, redirect, jsonify, url_for, flash
 from flask import session as login_session
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
-from db_setup import Base, Image, Tags, Text
+from db_setup import Base, Image, Tags
 import random
 import string
 
@@ -41,7 +41,7 @@ def image(image_id):
     """
 
     image = session.query(Image).filter_by(id = image_id).one()
-    tags = session.query(Tags).filter_by(image_id=image_id).all()
+    tags = image.tags
     return render_template('image.html', image=image, tags=tags)
 
 @app.route('/image/<int:image_id>/delete', methods=['GET', 'POST'])
@@ -66,10 +66,22 @@ def newImage():
         new_image = Image(name = request.form['image_name'],
                           link = request.form['image_url'],
                           description = request.form['image_description'])
-        tags = request.form['tags'].split(',')
-
         session.add(new_image)
         session.commit()
+
+        tags = request.form['tags'].split(',')
+        for tag in tags:
+            tag = tag.strip().lower()
+            try:
+                tag = session.query(Tags).filter_by(tag = tag).one()
+            except:
+                print 'Adding tag {}'.format(tag)
+                tag = Tags(tag = tag)
+                session.add(tag)
+                session.commit()
+            new_image.tags.append(tag)
+            session.commit()
+
         return redirect(url_for('home'))
     return render_template('new_image.html')
 

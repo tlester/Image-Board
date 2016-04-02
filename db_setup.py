@@ -2,13 +2,29 @@
 
 import os
 import sys
-from sqlalchemy import Column, ForeignKey, Integer, String, Text
+from sqlalchemy import Column, ForeignKey, Integer, String, Text, Table
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy import create_engine, asc
 
 Base = declarative_base()
 
+tag_lookup = Table('tag_lookup',
+             Base.metadata,
+             Column('tag_id', Integer(), ForeignKey('tags.id')),
+             Column('image_id', Integer(), ForeignKey('image.id'))
+             )
+
+class Tags(Base):
+    __tablename__ = 'tags'
+
+    id = Column(Integer, primary_key=True)
+    tag = Column(String(80), unique=True)
+    tags = relationship('Image',
+                        secondary=tag_lookup,
+                        backref=backref('tags',
+                        lazy = 'dynamic')
+                        )
 
 class Image(Base):
     __tablename__ = 'image'
@@ -17,21 +33,6 @@ class Image(Base):
     name = Column(String(250), nullable=True)
     link = Column(String(250), nullable=False)
     description = Column(Text, nullable=True)
-
-
-class Tags(Base):
-    __tablename__ = 'tags'
-
-    tag = Column(String(80), primary_key=True, nullable=False)
-    id = Column(Integer, primary_key=True)
-
-class TagLookup(Base):
-    __tablename__ = 'tag_lookup'
-
-    id = Column(Integer, primary_key=True)
-    tag_id = Column(Integer, ForeignKey('tags.id'), nullable=False)
-    image_id = Column(Integer, ForeignKey('image.id'), nullable=False)
-
 
 
 # We added this serialize function to be able to send JSON objects in a
