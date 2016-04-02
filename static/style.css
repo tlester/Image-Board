@@ -1,3 +1,7 @@
 img.medium {
   max-width: 300px;
 }
+
+body {
+    padding-bottom: 120px;
+}

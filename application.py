@@ -35,6 +35,26 @@ def home():
     #tags = session.query(Tags).filter_by(image_id=image.id).all()
     return render_template('home.html', images=images)
 
+
+@app.route('/tags/')
+def tags():
+    """ A page displaying each tag
+    """
+
+    tags = session.query(Tags).all()
+    return render_template('tags.html', tags=tags)
+
+
+@app.route('/tag/<int:tag_id>/')
+def tag(tag_id):
+    """ Tag page, showing all images for a tag
+    """
+
+    tag = session.query(Tags).filter_by(id = tag_id).one()
+    images = tag.images
+    return render_template('tag.html', tag = tag, images = images)
+
+
 @app.route('/image/<int:image_id>/')
 def image(image_id):
     """ Main page for an individual image

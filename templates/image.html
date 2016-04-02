@@ -14,11 +14,9 @@
   </span>
   </div>
   <h3>Tags:</h3>
-  <ul>
   {% for tag in tags %}
-  <li>{{tag.tag}}</li>
+  <a href="{{ url_for('tag', tag_id=tag.id) }}">{{tag.tag}}</a>
   {% endfor %}
-  </ul>
 </div>
 
 

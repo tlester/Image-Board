@@ -33,6 +33,11 @@ class Image(Base):
     name = Column(String(250), nullable=True)
     link = Column(String(250), nullable=False)
     description = Column(Text, nullable=True)
+    images = relationship('Tags',
+                          secondary=tag_lookup,
+                          backref=backref('images'),
+                          lazy = 'dynamic'
+                          )
 
 
 # We added this serialize function to be able to send JSON objects in a
