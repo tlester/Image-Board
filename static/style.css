@@ -5,3 +5,7 @@ img.medium {
 body {
     padding-bottom: 120px;
 }
+
+.btn-space {
+    margin-right: 5px;
+}

@@ -10,7 +10,10 @@
     <p>{{image.description}}</p>
   </span>
   <span class="col-md-6">
-   <a href="{{ url_for('deleteImage', image_id=image.id) }}"><button type="button" class="btn btn-danger col-md-2 pull-right">Delete</button></a>
+   <a href="{{ url_for('deleteImage', image_id=image.id) }}">
+   <button type="button" class="btn btn-danger pull-right">Delete</button></a>
+   <a href="{{ url_for('editImage', image_id=image.id) }}">
+  <button type="button" class="btn btn-default btn-space pull-right">Edit</button></a>
   </span>
   </div>
   <h3>Tags:</h3>

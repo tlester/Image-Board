@@ -32,7 +32,6 @@ def home():
     """
 
     images = session.query(Image).all()
-    #tags = session.query(Tags).filter_by(image_id=image.id).all()
     return render_template('home.html', images=images)
 
 
@@ -42,7 +41,6 @@ def tags():
     """
 
     tags = session.query(Tags).all()
-    print tags[0].images[0].link
     return render_template('tags.html', tags=tags)
 
 
@@ -64,6 +62,14 @@ def image(image_id):
     image = session.query(Image).filter_by(id = image_id).one()
     tags = image.tags
     return render_template('image.html', image=image, tags=tags)
+
+
+@app.route('/images/<int:image_id>/edit')
+def editImage(image_id):
+    """ Page for editing an image
+    """
+
+    return 'Edit image# {}'.format(image_id)
 
 @app.route('/image/<int:image_id>/delete', methods=['GET', 'POST'])
 def deleteImage(image_id):
