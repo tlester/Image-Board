@@ -42,6 +42,7 @@ def tags():
     """
 
     tags = session.query(Tags).all()
+    print tags[0].images[0].link
     return render_template('tags.html', tags=tags)
 
 
