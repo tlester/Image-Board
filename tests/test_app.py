@@ -28,6 +28,12 @@ class FlaskTestCase(unittest.TestCase):
         response = tester.get('/')
         self.assertEqual(response.status_code, 200)
 
+    def test_tags(self):
+        tester = app.test_client(self)
+        response = tester.get('/tags')
+        self.assertEqual(response.status_code, 200)
+
+
 
 if __name__ == '__main__':
     unittest.main()
