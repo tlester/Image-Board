@@ -26,9 +26,18 @@
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('newImage')}}">New Image</a>
         </li>
+        {% if login_session['username'] %}
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('disconnect')}}">Logout</a>
+        </li>
+        <li class="nav-item">
+        <img src="{{login_session['picture']}}" class="navbar-brand" />
+        </li>
+        {% else %}
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('showLogin')}}">Login</a>
         </li>
+        {% endif %}
       </ul>
     </div>
   </div>

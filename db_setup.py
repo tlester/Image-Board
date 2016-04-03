@@ -15,6 +15,15 @@ tag_lookup = Table('tag_lookup',
              Column('image_id', Integer(), ForeignKey('image.id'))
              )
 
+class User(Base):
+    __tablename__ = 'user'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(250), nullable=False)
+    email = Column(String(250), nullable=False)
+    picture = Column(String(250))
+
+
 class Tags(Base):
     __tablename__ = 'tags'
 
@@ -38,6 +47,8 @@ class Image(Base):
                           backref=backref('images'),
                           lazy = 'dynamic'
                           )
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
 
 
 # We added this serialize function to be able to send JSON objects in a
