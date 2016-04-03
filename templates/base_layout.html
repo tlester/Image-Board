@@ -23,10 +23,10 @@
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('tags')}}">Tags</a>
         </li>
+        {% if login_session['username'] %}
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('newImage')}}">New Image</a>
         </li>
-        {% if login_session['username'] %}
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('disconnect')}}">Logout</a>
         </li>

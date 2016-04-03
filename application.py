@@ -4,7 +4,7 @@ from flask import request, redirect, jsonify, url_for, flash
 from flask import session as login_session
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
-from db_setup import Base, Image, Tags, User
+from db_setup import Base, Image, Tags, Users
 import random
 import string
 
@@ -319,7 +319,8 @@ def newImage():
     if request.method == 'POST':
         new_image = Image(name = request.form['image_name'],
                           link = request.form['image_url'],
-                          description = request.form['image_description'])
+                          description = request.form['image_description'],
+                          user_id = login_session['user_id'])
         session.add(new_image)
         session.commit()
 
@@ -377,22 +378,22 @@ def disconnect():
 
 
 def createUser(login_session):
-    newUser = User(name=login_session['username'], email=login_session[
+    newUser = Users(name=login_session['username'], email=login_session[
                    'email'], picture=login_session['picture'])
     session.add(newUser)
     session.commit()
-    user = session.query(User).filter_by(email=login_session['email']).one()
+    user = session.query(Users).filter_by(email=login_session['email']).one()
     return user.id
 
 
 def getUserInfo(user_id):
-    user = session.query(User).filter_by(id=user_id).one()
+    user = session.query(Users).filter_by(id=user_id).one()
     return user
 
 
 def getUserID(email):
     try:
-        user = session.query(User).filter_by(email=email).one()
+        user = session.query(Users).filter_by(email=email).one()
         return user.id
     except:
         return None
