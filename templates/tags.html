@@ -6,7 +6,7 @@
     {% if tag.images[0] %}
         <div class="col-md-4">
         <a href="{{ url_for('tag', tag_id=tag.id)}}"><img src="{{tag.images[0].link}}" class="medium" /></a><br />
-        <h4>{{tag.tag}}</h4>
+        <h4>{{tag.tag}} ({{tag.images|length}})</h4>
         </div>
     {% endif %}
   {% endfor %}
