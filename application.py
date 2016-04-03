@@ -127,7 +127,7 @@ def gconnect():
     output += '<img src="'
     output += login_session['picture']
     output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
-    flash("you are now logged in as %s" % login_session['username'])
+    flash('you are now logged in as {}'.format(login_session['username']), 'success')
     print "done!"
     return output
 
@@ -194,7 +194,7 @@ def fbconnect():
     output += login_session['picture']
     output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
 
-    flash("Now logged in as %s" % login_session['username'])
+    flash('Now logged in as {}'.format(login_session['username']), 'success')
     return output
 
 
@@ -205,10 +205,10 @@ def fbdisconnect():
     facebook_id = login_session['facebook_id']
     # The access token must me included to successfully logout
     access_token = login_session['access_token']
-    url = 'https://graph.facebook.com/%s/permissions?access_token=%s' % (facebook_id,access_token)
+    url = 'https://graph.facebook.com/{}/permissions?access_token={}'.format(facebook_id, access_token)
     h = httplib2.Http()
     result = h.request(url, 'DELETE')[1]
-    return "you have been logged out"
+    return result
 
 
 
@@ -288,6 +288,7 @@ def editImage(image_id):
             image.tags.append(tag)
             session.commit()
 
+        flash('{} has been successfully updated'.format(image.name), 'success')
         return redirect(url_for('image', image_id=image.id))
     return render_template('edit_image.html',
                            image=image, tags=tags,
@@ -300,9 +301,11 @@ def deleteImage(image_id):
     """
 
     image = session.query(Image).filter_by(id = image_id).one()
+    image_name = image.name
     if request.method == 'POST':
         session.delete(image)
         session.commit()
+        flash('{} has been successfully deleted.'.format(image_name), 'success')
         return redirect(url_for('home'))
 
     return render_template('delete_image.html', image=image, login_session=login_session)
@@ -333,6 +336,8 @@ def newImage():
             new_image.tags.append(tag)
             session.commit()
 
+        flash('{} has been created successfully!'.format(request.form['image_name']), 'success')
+
         return redirect(url_for('home'))
     return render_template('new_image.html', login_session=login_session)
 
@@ -345,15 +350,14 @@ def disconnect():
         if login_session['provider'] == 'google':
             results = gdisconnect()
             if results.status_code != 200:
-                print 'Failed to log out'
-                flash('Log out failed')
+                flash('Log out failed', 'error')
                 return redirect(url_for('home'))
             del login_session['gplus_id']
         if login_session['provider'] == 'facebook':
             results = fbdisconnect()
-            if results.status_code != 200:
+            if 'true' not in results:
                 print 'Failed to log out'
-                flash('Log out failed')
+                flash('Log out failed', 'error')
                 return redirect(url_for('home'))
             del login_session['facebook_id']
         del login_session['access_token']
@@ -362,10 +366,10 @@ def disconnect():
         del login_session['picture']
         del login_session['user_id']
         del login_session['provider']
-        flash("You have successfully been logged out.")
+        flash('You have successfully been logged out.', 'success')
         return redirect(url_for('home'))
     else:
-        flash("You were not logged in")
+        flash('You were not logged in', 'warning')
         return redirect(url_for('home'))
 
 
