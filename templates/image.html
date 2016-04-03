@@ -9,17 +9,21 @@
   <span class="col-md-6">
     <p>{{image.description}}</p>
   </span>
+  {% if image.user.email == login_session['email'] %}
   <span class="col-md-6">
    <a href="{{ url_for('deleteImage', image_id=image.id) }}">
    <button type="button" class="btn btn-danger pull-right">Delete</button></a>
    <a href="{{ url_for('editImage', image_id=image.id) }}">
   <button type="button" class="btn btn-default btn-space pull-right">Edit</button></a>
   </span>
+  {% endif %}
   </div>
   <h3>Tags:</h3>
   {% for tag in tags %}
   <a href="{{ url_for('tag', tag_id=tag.id) }}">{{tag.tag}}</a>
   {% endfor %}
+  <hr />
+  <p>Image added by: {{ image.user.name }}</p>
 </div>
 
 

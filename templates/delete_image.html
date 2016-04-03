@@ -2,6 +2,7 @@
 {% block title %}Home{% endblock %}
 {% block content %}
 
+{% if login_session['email'] == image.user.email %}
 <div class="container">
   <h1>Are you sure you want to delete:</h1>
   <h1>"{{image.name}}"</h1>
@@ -14,6 +15,11 @@
 <img src="{{image.link}}" class="img-responsive medium"/><br />
 <p>{{image.description}}</p>
 </div>
+{% else %}
+
+  <div class="alert alert-danger" role="alert">Can't delete image "{{image.name}}".  Not logged in or not the owner of this image.</div>
+
+{% endif %}
 
 
 {% endblock %}
