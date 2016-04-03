@@ -2,7 +2,6 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-
 <!-- GOOGLE PLUS SIGN IN BUTTON-->
 <div class="col-md-4 col-md-offset-4">
 <h1>Login</h1>
@@ -39,7 +38,7 @@ function signInCallback(authResult) {
                 if (result) {
                     $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
                     setTimeout(function() {
-                        window.location.href = '/';
+                        window.location.href = '{{referrer}}';
                     }, 4000);
 
                 } else if (authResult['error']) {
@@ -93,7 +92,7 @@ function signInCallback(authResult) {
         if (result) {
           $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
          setTimeout(function() {
-          window.location.href = '/';
+          window.location.href = '{{referrer}}';
          }, 4000);
 
       } else {

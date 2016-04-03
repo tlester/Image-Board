@@ -36,7 +36,8 @@ def showLogin():
                     for x in xrange(32))
     login_session['state'] = state
     return render_template('login.html', STATE=state,
-                           login_session=login_session)
+                           login_session=login_session,
+                           referrer=request.referrer)
 
 
 
