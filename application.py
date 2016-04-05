@@ -29,7 +29,7 @@ CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Image Board"
 
-
+# TODO:  Fix FB button on login page.
 # Create anti-forgery state token
 @app.route('/login')
 def showLogin():
@@ -122,18 +122,10 @@ def gconnect():
         user_id = createUser(login_session)
     login_session['user_id'] = user_id
 
-    # TODO:  Make this a template.
-    output = ''
-    output += '<h1>Welcome, '
-    output += login_session['username']
-    output += '!</h1>'
-    output += '<img src="'
-    output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '  # NOQA
     flash('you are now logged in as {}'.format(login_session['username']),
           'success')
     print "done!"
-    return output
+    return render_template('auth_results.html', login_session=login_session)
 
 
 @app.route('/fbconnect', methods=['POST'])
