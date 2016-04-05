@@ -213,7 +213,7 @@ def fbdisconnect():
 
 
 
-#@app.route('/images/<int:image_id>/')
+@app.route('/images')
 @app.route('/')
 def home():
     """ Main landing page for catalog app
@@ -223,6 +223,14 @@ def home():
                            login_session=login_session)
 
 
+@app.route('/images/JSON')
+def imagesJSON():
+    """ JSON output for all the images
+    """
+
+    images = session.query(Image).all()
+    return jsonify(Images=[i.serialize for i in images])
+
 @app.route('/tags/')
 def tags():
     """ A page displaying each tag
@@ -230,6 +238,15 @@ def tags():
 
     tags = session.query(Tags).all()
     return render_template('tags.html', tags=tags, login_session=login_session)
+
+
+@app.route('/tags/JSON')
+def tagsJSON():
+    """ A page displaying each tag
+    """
+
+    tags = session.query(Tags).all()
+    return jsonify(Tags=[t.serialize for t in tags])
 
 
 @app.route('/tag/<int:tag_id>/')
@@ -243,6 +260,15 @@ def tag(tag_id):
                            images = images, login_session=login_session)
 
 
+@app.route('/tag/<int:tag_id>/JSON')
+def tagJSON(tag_id):
+    """ Tag page, showing all images for a tag
+    """
+
+    tag = session.query(Tags).filter_by(id = tag_id).one()
+    return jsonify(Tags=[tag.serialize])
+
+
 @app.route('/image/<int:image_id>/')
 def image(image_id):
     """ Main page for an individual image
@@ -254,7 +280,16 @@ def image(image_id):
                            tags=tags, login_session=login_session)
 
 
-@app.route('/images/<int:image_id>/edit', methods=['GET', 'POST'])
+@app.route('/image/<int:image_id>/JSON')
+def imageJSON(image_id):
+    """ Main page for an individual image
+    """
+
+    image = session.query(Image).filter_by(id = image_id).one()
+    return jsonify(Image=[image.serialize])
+
+
+@app.route('/image/<int:image_id>/edit', methods=['GET', 'POST'])
 def editImage(image_id):
     """ Page for editing an image
     """

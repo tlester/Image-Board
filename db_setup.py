@@ -24,6 +24,8 @@ class Users(Base):
     picture = Column(String(250))
 
 
+
+
 class Tags(Base):
     __tablename__ = 'tags'
 
@@ -34,6 +36,23 @@ class Tags(Base):
                         backref=backref('tags',
                         lazy = 'dynamic')
                         )
+
+    @property
+    def serialize(self):
+
+        return {
+            'tag': self.tag,
+            'id:': self.id,
+            'images': [{'id': image.id,
+                        'name': image.name,
+                        'link': image.link,
+                        'description': image.description,
+                        'creator': {'id': image.user.id,
+                                    'name': image.user.name,
+                                    'email': image.user.email,
+                                    'picture': image.user.picture}
+                        } for image in self.images]
+        }
 
 class Image(Base):
     __tablename__ = 'image'
@@ -53,16 +72,20 @@ class Image(Base):
 
 # We added this serialize function to be able to send JSON objects in a
 # serializable format
-#    @property
-#    def serialize(self):
-#
-#        return {
-#            'name': self.name,
-#            'description': self.description,
-#            'id': self.id,
-#            'price': self.price,
-#            'course': self.course,
-#        }
+    @property
+    def serialize(self):
+
+        return {
+            'name': self.name,
+            'link': self.link,
+            'description': self.description,
+            'id': self.id,
+            'creator': {'id': self.user.id,
+                        'name': self.user.name,
+                        'email': self.user.email,
+                        'picture': self.user.picture},
+            'tags': [tag.tag for tag in self.tags]
+        }
 
 
 #engine = create_engine('sqlite:///application.db')
