@@ -105,17 +105,13 @@ function signInCallback(authResult) {
   }
 </script>
 
-
-<button>
-
-
-          <fb:login-button scope="public_profile,email" onlogin="sendTokenToServer();">
+<div class="col-md-4 col-md-offset-4">
+<fb:login-button scope="public_profile,email" onlogin="sendTokenToServer();">
 <a href='javascript:sendTokenToServer()'>Login with Facebook</a>
-
 </fb:login-button>
+</div>
 
 
-        </button>
 <!--END FACEBOOK SIGN IN -->
 
 {% endblock %}

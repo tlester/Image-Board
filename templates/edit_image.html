@@ -5,7 +5,9 @@
 
   {% if login_session['email'] == image.user.email %}
   <h1>Edit Image</h1>
-
+  <center>
+  <img src="{{ image.link }}" class="medium img-thumbnail">
+  </center>
   <form action="{{ url_for('editImage', image_id=image.id) }}" method="POST">
   <fieldset class="form-group">
     <label for="image_name">Image Name</label>
