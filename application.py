@@ -2,7 +2,7 @@
 from flask import Flask, render_template
 from flask import request, redirect, jsonify, url_for, flash
 from flask import session as login_session
-from sqlalchemy import create_engine, asc
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from db_setup import Base, Image, Tags, Users
 import random
@@ -16,7 +16,7 @@ from flask import make_response
 import requests
 
 # Connect to Database and create database session
-#engine = create_engine('sqlite:///application.db')
+# engine = create_engine('sqlite:///application.db')
 engine = create_engine('postgresql:///catalog')
 Base.metadata.bind = engine
 
@@ -29,6 +29,7 @@ CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Image Board"
 
+
 # Create anti-forgery state token
 @app.route('/login')
 def showLogin():
@@ -38,7 +39,6 @@ def showLogin():
     return render_template('login.html', STATE=state,
                            login_session=login_session,
                            referrer=request.referrer)
-
 
 
 @app.route('/gconnect', methods=['POST'])
@@ -93,7 +93,8 @@ def gconnect():
     stored_credentials = login_session.get('credentials')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_credentials is not None and gplus_id == stored_gplus_id:
-        response = make_response(json.dumps('Current user is already connected.'),
+        response = make_response(json.dumps('Current user is '
+                                            'already connected.'),
                                  200)
         response.headers['Content-Type'] = 'application/json'
         return response
@@ -121,14 +122,16 @@ def gconnect():
         user_id = createUser(login_session)
     login_session['user_id'] = user_id
 
+    # TODO:  Make this a template.
     output = ''
     output += '<h1>Welcome, '
     output += login_session['username']
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
-    flash('you are now logged in as {}'.format(login_session['username']), 'success')
+    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '  # NOQA
+    flash('you are now logged in as {}'.format(login_session['username']),
+          'success')
     print "done!"
     return output
 
@@ -146,16 +149,12 @@ def fbconnect():
         'web']['app_id']
     app_secret = json.loads(
         open('fb_client_secrets.json', 'r').read())['web']['app_secret']
-    url = 'https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s' % (
-        app_id, app_secret, access_token)
+    url = 'https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id={}&client_secret={}&fb_exchange_token={}'.format(app_id, app_secret, access_token)  # NOQA
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
 
-    # Use token to get user info from API
-    userinfo_url = "https://graph.facebook.com/v2.4/me"
     # strip expire tag from access token
     token = result.split("&")[0]
-
 
     url = 'https://graph.facebook.com/v2.4/me?%s&fields=name,id,email' % token
     h = httplib2.Http()
@@ -168,12 +167,14 @@ def fbconnect():
     login_session['email'] = data["email"]
     login_session['facebook_id'] = data["id"]
 
-    # The token must be stored in the login_session in order to properly logout, let's strip out the information before the equals sign in our token
+    # The token must be stored in the login_session in order to properly
+    # logout, let's strip out the information before the equals sign
+    # in our token
     stored_token = token.split("=")[1]
     login_session['access_token'] = stored_token
 
     # Get user picture
-    url = 'https://graph.facebook.com/v2.4/me/picture?%s&redirect=0&height=200&width=200' % token
+    url = 'https://graph.facebook.com/v2.4/me/picture?{}&redirect=0&height=200&width=200'.format(token)  # NOQA
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
     data = json.loads(result)
@@ -186,6 +187,7 @@ def fbconnect():
         user_id = createUser(login_session)
     login_session['user_id'] = user_id
 
+    # TODO:  Make this a template, add style to style.css
     output = ''
     output += '<h1>Welcome, '
     output += login_session['username']
@@ -193,12 +195,10 @@ def fbconnect():
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '  # NOQA
 
     flash('Now logged in as {}'.format(login_session['username']), 'success')
     return output
-
-
 
 
 @app.route('/fbdisconnect')
@@ -206,11 +206,10 @@ def fbdisconnect():
     facebook_id = login_session['facebook_id']
     # The access token must me included to successfully logout
     access_token = login_session['access_token']
-    url = 'https://graph.facebook.com/{}/permissions?access_token={}'.format(facebook_id, access_token)
+    url = 'https://graph.facebook.com/{}/permissions?access_token={}'.format(facebook_id, access_token)  # NOQA
     h = httplib2.Http()
     result = h.request(url, 'DELETE')[1]
     return result
-
 
 
 @app.route('/images')
@@ -230,6 +229,7 @@ def imagesJSON():
 
     images = session.query(Image).all()
     return jsonify(Images=[i.serialize for i in images])
+
 
 @app.route('/tags/')
 def tags():
@@ -254,10 +254,10 @@ def tag(tag_id):
     """ Tag page, showing all images for a tag
     """
 
-    tag = session.query(Tags).filter_by(id = tag_id).one()
+    tag = session.query(Tags).filter_by(id=tag_id).one()
     images = tag.images
-    return render_template('tag.html', tag = tag,
-                           images = images, login_session=login_session)
+    return render_template('tag.html', tag=tag,
+                           images=images, login_session=login_session)
 
 
 @app.route('/tag/<int:tag_id>/JSON')
@@ -265,7 +265,7 @@ def tagJSON(tag_id):
     """ Tag page, showing all images for a tag
     """
 
-    tag = session.query(Tags).filter_by(id = tag_id).one()
+    tag = session.query(Tags).filter_by(id=tag_id).one()
     return jsonify(Tags=[tag.serialize])
 
 
@@ -274,7 +274,7 @@ def image(image_id):
     """ Main page for an individual image
     """
 
-    image = session.query(Image).filter_by(id = image_id).one()
+    image = session.query(Image).filter_by(id=image_id).one()
     tags = image.tags
     return render_template('image.html', image=image,
                            tags=tags, login_session=login_session)
@@ -285,7 +285,7 @@ def imageJSON(image_id):
     """ Main page for an individual image
     """
 
-    image = session.query(Image).filter_by(id = image_id).one()
+    image = session.query(Image).filter_by(id=image_id).one()
     return jsonify(Image=[image.serialize])
 
 
@@ -294,7 +294,7 @@ def editImage(image_id):
     """ Page for editing an image
     """
 
-    image = session.query(Image).filter_by(id = image_id).one()
+    image = session.query(Image).filter_by(id=image_id).one()
     existing_tags = []
     for tag in image.tags:
         existing_tags.append(tag.tag)
@@ -315,10 +315,10 @@ def editImage(image_id):
         for tag in tags:
             tag = tag.strip().lower()
             try:
-                tag = session.query(Tags).filter_by(tag = tag).one()
+                tag = session.query(Tags).filter_by(tag=tag).one()
             except:
                 print 'Adding tag {}'.format(tag)
-                tag = Tags(tag = tag)
+                tag = Tags(tag=tag)
                 session.add(tag)
                 session.commit()
             image.tags.append(tag)
@@ -336,15 +336,17 @@ def deleteImage(image_id):
     """ Prompt to delete an image
     """
 
-    image = session.query(Image).filter_by(id = image_id).one()
+    image = session.query(Image).filter_by(id=image_id).one()
     image_name = image.name
     if request.method == 'POST':
         session.delete(image)
         session.commit()
-        flash('{} has been successfully deleted.'.format(image_name), 'success')
+        flash('{} has been successfully '
+              'deleted.'.format(image_name), 'success')
         return redirect(url_for('home'))
 
-    return render_template('delete_image.html', image=image, login_session=login_session)
+    return render_template('delete_image.html',
+                           image=image, login_session=login_session)
 
 
 @app.route('/images/new', methods=['GET', 'POST'])
@@ -353,10 +355,10 @@ def newImage():
     """
 
     if request.method == 'POST':
-        new_image = Image(name = request.form['image_name'],
-                          link = request.form['image_url'],
-                          description = request.form['image_description'],
-                          user_id = login_session['user_id'])
+        new_image = Image(name=request.form['image_name'],
+                          link=request.form['image_url'],
+                          description=request.form['image_description'],
+                          user_id=login_session['user_id'])
         session.add(new_image)
         session.commit()
 
@@ -364,20 +366,20 @@ def newImage():
         for tag in tags:
             tag = tag.strip().lower()
             try:
-                tag = session.query(Tags).filter_by(tag = tag).one()
+                tag = session.query(Tags).filter_by(tag=tag).one()
             except:
                 print 'Adding tag {}'.format(tag)
-                tag = Tags(tag = tag)
+                tag = Tags(tag=tag)
                 session.add(tag)
                 session.commit()
             new_image.tags.append(tag)
             session.commit()
 
-        flash('{} has been created successfully!'.format(request.form['image_name']), 'success')
+        flash('{} has been created '
+              'successfully!'.format(request.form['image_name']), 'success')
 
         return redirect(url_for('home'))
     return render_template('new_image.html', login_session=login_session)
-
 
 
 # Disconnect based on provider
@@ -447,7 +449,7 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
     access_token = login_session['access_token']
-    url = 'https://accounts.google.com/o/oauth2/revoke?token={}'.format(access_token)
+    url = 'https://accounts.google.com/o/oauth2/revoke?token={}'.format(access_token)  # NOQA
     print 'LOGOUT URL:  {}'.format(url)
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
