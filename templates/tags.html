@@ -11,8 +11,8 @@
       <div class="item">
         <a href="{{ url_for('tag', tag_id=tag.id)}}">
           <img src="{{tag.images[0].link}}" class="img-responsive" />
-        </a><br />
-        <h4>{{tag.tag}} ({{tag.images|length}})</h4>
+        </a>
+        <p>{{tag.tag}} ({{tag.images|length}})</p>
       </div>
     {% endif %}
   {% endfor %}
