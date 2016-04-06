@@ -1,3 +1,4 @@
+<!-- Extend base laylout -->
 {% extends "base_layout.html" %}
 {% block title %}Home{% endblock %}
 
@@ -18,8 +19,6 @@
 </div>
 
 <div id="result"></div>
-
-
 
 <script>
 function signInCallback(authResult) {
@@ -110,8 +109,6 @@ function signInCallback(authResult) {
 <a href='javascript:sendTokenToServer()'>Login with Facebook</a>
 </fb:login-button>
 </div>
-
-
 <!--END FACEBOOK SIGN IN -->
 
 {% endblock %}

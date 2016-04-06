@@ -1,9 +1,13 @@
+<!-- Extend base layout -->
 {% extends "base_layout.html" %}
 {% block title %}Home{% endblock %}
 {% block content %}
   <div class="col-md-4 col-md-offset-4">
 
+  <!-- Confirm the user is authorized -->
   {% if login_session['email'] == image.user.email %}
+
+  <!-- Present edit form -->
   <h1>Edit Image</h1>
   <center>
   <img src="{{ image.link }}" class="medium img-thumbnail">
@@ -35,6 +39,7 @@
 
 {% else %}
 
+  <!-- If user is not authorized -->
   <div class="alert alert-danger" role="alert">Can't delete image "{{image.name}}".  Not logged in or not the owner of this image.</div>
 
 {% endif %}

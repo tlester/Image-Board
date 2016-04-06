@@ -2,12 +2,20 @@
 {% block title %}Home{% endblock %}
 {% block content %}
 
+<!-- Build up masonry -->
+<div class="container">
+  <div class="masonry">
+  <!-- Loop through tags -->
   {% for tag in tags %}
     {% if tag.images[0] %}
-        <div class="col-md-4">
-        <a href="{{ url_for('tag', tag_id=tag.id)}}"><img src="{{tag.images[0].link}}" class="medium" /></a><br />
+      <div class="item">
+        <a href="{{ url_for('tag', tag_id=tag.id)}}">
+          <img src="{{tag.images[0].link}}" class="img-responsive" />
+        </a><br />
         <h4>{{tag.tag}} ({{tag.images|length}})</h4>
-        </div>
+      </div>
     {% endif %}
   {% endfor %}
+  </div>
+</div>
 {% endblock %}

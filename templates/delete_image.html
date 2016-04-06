@@ -1,15 +1,20 @@
+<!-- Extend the base layout -->
 {% extends "base_layout.html" %}
 {% block title %}Home{% endblock %}
 {% block content %}
 
+<!-- Verify if user is authorized -->
 {% if login_session['email'] == image.user.email %}
+
+<!-- Confirm deletion -->
 <div class="container">
   <h1>Are you sure you want to delete:</h1>
   <h1>"{{image.name}}"</h1>
   <span class="pull-right">
   <form action="{{ url_for('deleteImage', image_id=image.id) }}" method="POST">
   <button type="submit" value="Create" class="btn btn-danger">Delete</button>
-  <a href="{{ url_for('image', image_id=image.id) }}"><button type="button" class="btn btn-ok">Cancel</button></a>
+  <a href="{{ url_for('image', image_id=image.id) }}">
+  <button type="button" class="btn btn-ok">Cancel</button></a>
 </form></span>
 
 <img src="{{image.link}}" class="img-responsive medium"/><br />
@@ -17,6 +22,7 @@
 </div>
 {% else %}
 
+  <!-- If not authorized or logged in -->
   <div class="alert alert-danger" role="alert">Can't delete image "{{image.name}}".  Not logged in or not the owner of this image.</div>
 
 {% endif %}

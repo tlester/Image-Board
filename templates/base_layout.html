@@ -3,109 +3,116 @@
 <head>
   {% block head %}
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+  <link rel="stylesheet"
+        href="{{ url_for('static', filename='bootstrap.min.css') }}">
+
   <!--LOAD PRE-REQUISITES FOR GOOGLE SIGN IN -->
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js">
   </script>
   <script src="//apis.google.com/js/platform.js?onload=start"> </script>
+
   <!-- END PRE-REQUISITES FOR GOOGLE SIGN IN -->
   <title>{% block title %}{% endblock %} - Pin Board</title>
   {% endblock %}
 </head>
 <body class="padding-bottom">
-<nav class="navbar navbar-default">
-  <div class="container">
-    <div class="navbar-header col-md-3">
-      <a href="{{ url_for('home')}}" class="navbar-brand">Image Board</a>
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header col-md-3">
+        <a href="{{ url_for('home')}}" class="navbar-brand">Image Board</a>
+      </div>
+      <div class="navbar-header col-md-9">
+        <ul class="nav navbar-nav pull-right">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('tags')}}">Tags</a>
+          </li>
+          {% if login_session['username'] %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('newImage')}}">New Image</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('disconnect')}}">Logout</a>
+          </li>
+          <li class="nav-item">
+          <img src="{{login_session['picture']}}" class="navbar-brand" />
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('showLogin')}}">Login</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
     </div>
-    <div class="navbar-header col-md-9">
-      <ul class="nav navbar-nav pull-right">
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('tags')}}">Tags</a>
-        </li>
-        {% if login_session['username'] %}
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('newImage')}}">New Image</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('disconnect')}}">Logout</a>
-        </li>
-        <li class="nav-item">
-        <img src="{{login_session['picture']}}" class="navbar-brand" />
-        </li>
-        {% else %}
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('showLogin')}}">Login</a>
-        </li>
-        {% endif %}
+  </nav>
+  <div id="content" class="container">
+  <!-- Success Messages -->
+  {% with messages = get_flashed_messages(category_filter=['success']) %}
+    {% if messages %}
+      <div class="alert alert-success" role="alert">
+      <ul>
+      {% for message in messages %}
+        <li>{{message}}</li>
+      {% endfor %}
       </ul>
-    </div>
-  </div>
-</nav>
-<div id="content" class="container">
-<!-- Success Messages -->
-{% with messages = get_flashed_messages(category_filter=['success']) %}
-  {% if messages %}
-    <div class="alert alert-success" role="alert">
-    <ul>
-    {% for message in messages %}
-      <li>{{message}}</li>
-    {% endfor %}
-    </ul>
-    </div>
-  {% endif %}
-{% endwith %}
+      </div>
+    {% endif %}
+  {% endwith %}
 
-<!-- Info Messages -->
-{% with messages = get_flashed_messages(category_filter=['info']) %}
-  {% if messages %}
-    <div class="alert alert-info" role="alert">
-    <ul>
-    {% for message in messages %}
-      <li>{{message}}</li>
-    {% endfor %}
-    </ul>
-    </div>
-  {% endif %}
-{% endwith %}
+  <!-- Info Messages -->
+  {% with messages = get_flashed_messages(category_filter=['info']) %}
+    {% if messages %}
+      <div class="alert alert-info" role="alert">
+      <ul>
+      {% for message in messages %}
+        <li>{{message}}</li>
+      {% endfor %}
+      </ul>
+      </div>
+    {% endif %}
+  {% endwith %}
 
-<!-- Warning Messages -->
-{% with messages = get_flashed_messages(category_filter=['warning']) %}
-  {% if messages %}
-    <div class="alert alert-warning" role="alert">
-    <ul>
-    {% for message in messages %}
-      <li>{{message}}</li>
-    {% endfor %}
-    </ul>
-    </div>
-  {% endif %}
-{% endwith %}
+  <!-- Warning Messages -->
+  {% with messages = get_flashed_messages(category_filter=['warning']) %}
+    {% if messages %}
+      <div class="alert alert-warning" role="alert">
+      <ul>
+      {% for message in messages %}
+        <li>{{message}}</li>
+      {% endfor %}
+      </ul>
+      </div>
+    {% endif %}
+  {% endwith %}
 
-<!-- Error Messages -->
-{% with messages = get_flashed_messages(category_filter=['error']) %}
-  {% if messages %}
-    <div class="alert alert-danger" role="alert">
-    <ul>
-    {% for message in messages %}
-      <li>{{message}}</li>
-    {% endfor %}
-    </ul>
-    </div>
-  {% endif %}
-{% endwith %}
+  <!-- Error Messages -->
+  {% with messages = get_flashed_messages(category_filter=['error']) %}
+    {% if messages %}
+      <div class="alert alert-danger" role="alert">
+      <ul>
+      {% for message in messages %}
+        <li>{{message}}</li>
+      {% endfor %}
+      </ul>
+      </div>
+    {% endif %}
+  {% endwith %}
 
   {% block content %}
   {% endblock %}
 </div>
+<!-- Footer bar -->
 <div class="container">
   <footer class="navbar navbar-default navbar-fixed-bottom">
     <div class="container">
       {% block footer %}
-      <p class="navbar-text">&copy; Copyright 2016 by <a href="http://tomlester.com/">Tom Lester</a>.</p>
+      <p class="navbar-text">
+      &copy; Copyright 2016 by
+      <a href="http://tomlester.com/">Tom Lester</a>.</p>
       {% endblock %}
     </div>
   </footer>
+
 </div>
 </body>
 </html>

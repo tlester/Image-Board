@@ -1,13 +1,20 @@
+<!-- Extend base template -->
 {% extends "base_layout.html" %}
 {% block title %}Home{% endblock %}
 {% block content %}
 
+<!-- Build masonry -->
+<div class="container">
+  <div class="masonry">
   {% for image in images %}
-    <div class="col-md-4">
-    <a href="{{ url_for('image', image_id=image.id)}}"><img src="{{image.link}}" class="medium" /></a><br />
-    <h4>{{image.name}}</h4>
-    <p>{{image.description}}</p>
+  <div class="item">
+    <a href="{{ url_for('image', image_id=image.id)}}">
+      <img src="{{image.link}}" class="img-responsive"/>
+    </a><br />
+    <p>{{image.name}}</p>
     <br />
     </div>
   {% endfor %}
+  </div>
+</div>
 {% endblock %}
