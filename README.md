@@ -28,4 +28,4 @@ Once authenticate, the user can create new images.  An authenticated user
 may also edit or delete any image they have created.
 
 ## Demo site
-(http://ec2-54-213-215-230.us-west-2.compute.amazonaws.com:5000/)
+[DEMO Site](http://ec2-54-213-215-230.us-west-2.compute.amazonaws.com:5000/)
