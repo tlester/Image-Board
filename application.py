@@ -16,10 +16,8 @@ from flask import make_response
 import requests
 
 # Connect to Database and create database session
-# engine = create_engine('sqlite:///application.db')
 engine = create_engine('postgresql:///catalog')
 Base.metadata.bind = engine
-
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
@@ -29,9 +27,12 @@ CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Image Board"
 
-# Create anti-forgery state token
 @app.route('/login')
 def showLogin():
+    """ Login route and controller.  Sets state token to prevent
+        forgery.
+    """
+
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in xrange(32))
     login_session['state'] = state
@@ -42,6 +43,9 @@ def showLogin():
 
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
+    """ Authenticate via Google's OAuth2 service.
+    """
+
     # Validate state token
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
@@ -68,6 +72,7 @@ def gconnect():
     print "LOGIN VERIFY URL: {}".format(url)
     h = httplib2.Http()
     result = json.loads(h.request(url, 'GET')[1])
+
     # If there was an error in the access token info, abort.
     if result.get('error') is not None:
         response = make_response(json.dumps(result.get('error')), 500)
@@ -112,7 +117,6 @@ def gconnect():
     login_session['username'] = data['name']
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
-    # ADD PROVIDER TO LOGIN SESSION
     login_session['provider'] = 'google'
 
     # see if user exists, if it doesn't make a new one
@@ -121,6 +125,7 @@ def gconnect():
         user_id = createUser(login_session)
     login_session['user_id'] = user_id
 
+    # Add flash message to confirm user is logged in.
     flash('you are now logged in as {}'.format(login_session['username']),
           'success')
     print "done!"
@@ -129,12 +134,15 @@ def gconnect():
 
 @app.route('/fbconnect', methods=['POST'])
 def fbconnect():
+    """ Authenticate via Facebook's OAuth2 service
+    """
+
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
     access_token = request.data
-    print "access token received %s " % access_token
+    print "access token received {} ".format(access_token)
 
     app_id = json.loads(open('fb_client_secrets.json', 'r').read())[
         'web']['app_id']
@@ -147,11 +155,9 @@ def fbconnect():
     # strip expire tag from access token
     token = result.split("&")[0]
 
-    url = 'https://graph.facebook.com/v2.4/me?%s&fields=name,id,email' % token
+    url = 'https://graph.facebook.com/v2.4/me?{}&fields=name,id,email'.format(token)  # NOQA
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
-    # print "url sent for API access:%s"% url
-    # print "API JSON result: %s" % result
     data = json.loads(result)
     login_session['provider'] = 'facebook'
     login_session['username'] = data["name"]
@@ -183,6 +189,9 @@ def fbconnect():
 
 @app.route('/fbdisconnect')
 def fbdisconnect():
+    """ Asks Facebook to delete user's token.
+    """
+
     facebook_id = login_session['facebook_id']
     # The access token must me included to successfully logout
     access_token = login_session['access_token']
@@ -195,8 +204,10 @@ def fbdisconnect():
 @app.route('/images')
 @app.route('/')
 def home():
-    """ Main landing page for catalog app
+    """ Main landing page for catalog app.  Pulls all the images and
+        displays them on the page.
     """
+
     images = session.query(Image).all()
     return render_template('home.html', images=images,
                            login_session=login_session)
@@ -280,6 +291,7 @@ def editImage(image_id):
         existing_tags.append(tag.tag)
     tags = ', '.join(existing_tags)
 
+    # If post, make the required changes
     if request.method == 'POST':
         image.name = request.form['image_name']
         image.link = request.form['image_url']
@@ -287,6 +299,7 @@ def editImage(image_id):
         session.add(image)
         session.commit()
 
+        # Loop through each of the tags
         for tag in image.tags:
             session.delete(tag)
         session.commit()
@@ -343,6 +356,7 @@ def newImage():
         session.commit()
 
         tags = request.form['tags'].split(',')
+        # loop through each tag and add
         for tag in tags:
             tag = tag.strip().lower()
             try:
@@ -365,6 +379,11 @@ def newImage():
 # Disconnect based on provider
 @app.route('/disconnect')
 def disconnect():
+    """ Universal disconnect.  Determine the provider the user
+        used to login with, then call that providers's disconnect
+        function.
+    """
+
     if 'provider' in login_session:
         if login_session['provider'] == 'google':
             results = gdisconnect()
@@ -393,9 +412,13 @@ def disconnect():
 
 
 # User Helper Functions
-
-
 def createUser(login_session):
+    """ If a user logs in for the first time, create their user in the DB
+
+        Input - object - login_sesion
+        Returns - user.id
+    """
+
     newUser = Users(name=login_session['username'], email=login_session[
                    'email'], picture=login_session['picture'])
     session.add(newUser)
@@ -405,11 +428,21 @@ def createUser(login_session):
 
 
 def getUserInfo(user_id):
+    """ Get the user info for a user_id
+
+        Input - Integer, user_id
+        Returns - Object, user
+    """
+
     user = session.query(Users).filter_by(id=user_id).one()
     return user
 
 
 def getUserID(email):
+    """ Queries the DB for the user by e-mail.  If user exists,
+        returns user.id.  Else, returns "None".
+    """
+
     try:
         user = session.query(Users).filter_by(email=email).one()
         return user.id
@@ -421,6 +454,9 @@ def getUserID(email):
 
 @app.route('/gdisconnect')
 def gdisconnect():
+    """ Disconnect from google (revoke user token)
+    """
+
     # Only disconnect a connected user.
     credentials = login_session['access_token']
     if credentials is None:

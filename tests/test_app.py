@@ -18,11 +18,6 @@ class FlaskTestCase(unittest.TestCase):
     def tearDown(self):
         pass
 
-    # Our first unit test - We are using the unittest
-    # library, calling the _add_numbers route from the app
-    # passing a pair of numbers, and checking that the
-    # returned value, contained on the JSON response, match
-    # the sum of those parameters
     def test_index(self):
         tester = app.test_client(self)
         response = tester.get('/')
