@@ -30,6 +30,7 @@ may also edit or delete any image they have created.
 ## Demo site
 [DEMO Site](http://ec2-54-213-215-230.us-west-2.compute.amazonaws.com:5000/)
 
+
 # Installation
 
 ## Database Setup
@@ -40,14 +41,20 @@ tested with PostgreSQL.
 - Install postgresql on your host.
 - Create a DB user
 - Create the DB
-```Example on Linux host:
+
+```
+Example on Linux host:
 
 su postgres -c 'createuser -dRS vagrant'
 su vagrant -c 'createdb'
 su vagrant -c 'createdb catalog'
 ```
+
 - Edit the following line in application.py and db_setup.py to reflect the database you just created (ourse is called "catalog")
-```engine = create_engine('postgresql:///catalog')``
+
+```
+engine = create_engine('postgresql:///catalog')
+```
 
 ## Installing the application
 
@@ -63,6 +70,7 @@ https://github.com/tlester/catalog.git
 - Follow the instructions that facebook provides.
 - Make note of the "app_id" and "app_secret" for your newly created app.
 - Create a file in the same directory as the application called "fb_client_secrets.json".  It should look like this:
+
 ```
 {
   "web": {
@@ -85,8 +93,10 @@ https://github.com/tlester/catalog.git
 Change into the directory you created during installation ("catalog" by default).  Then start the application.
 
 
-```Example:
+```
+Example:
 
 cd catalog
-python application.py```
+python application.py
+```
 
