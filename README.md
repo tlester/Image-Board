@@ -29,3 +29,64 @@ may also edit or delete any image they have created.
 
 ## Demo site
 [DEMO Site](http://ec2-54-213-215-230.us-west-2.compute.amazonaws.com:5000/)
+
+# Installation
+
+## Database Setup
+
+The application can be used with various SQL type databases.  It has been
+tested with PostgreSQL.
+
+- Install postgresql on your host.
+- Create a DB user
+- Create the DB
+```Example on Linux host:
+
+su postgres -c 'createuser -dRS vagrant'
+su vagrant -c 'createdb'
+su vagrant -c 'createdb catalog'
+```
+- Edit the following line in application.py and db_setup.py to reflect the database you just created (ourse is called "catalog")
+```engine = create_engine('postgresql:///catalog')``
+
+## Installing the application
+
+In the directory that you want to install the application, run the following command:
+
+```
+https://github.com/tlester/catalog.git
+```
+
+## Configure Facebook OAuth2 client
+
+- Go to the [Facebook developer console](https://developers.facebook.com/) and in the dropdown menu next to your login picture, chose "Add New App".
+- Follow the instructions that facebook provides.
+- Make note of the "app_id" and "app_secret" for your newly created app.
+- Create a file in the same directory as the application called "fb_client_secrets.json".  It should look like this:
+```
+{
+  "web": {
+    "app_id": "<your_app_id>",
+    "app_secret": "<your_app_secret>"
+  }
+}
+```
+
+## Configure Google Oauth2 client
+
+- Go to the [Google Developer console](https://console.developers.google.com/) and in the dropdown menu next to your login picture, chose "Create a project".
+- Follow the instructions that google provides.
+- Once your app is created, under credentials click on your app name.
+- Click "Download JSON".
+- Rename the download file as "client_secrets.json" and place it in the application directory.
+
+## Starting the application
+
+Change into the directory you created during installation ("catalog" by default).  Then start the application.
+
+
+```Example:
+
+cd catalog
+python application.py```
+
