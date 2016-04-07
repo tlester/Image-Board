@@ -83,6 +83,7 @@ class Image(Base):
     description = Column(Text, nullable=True)
     images = relationship('Tags',
                           secondary=tag_lookup,
+                          viewonly=True,
                           backref=backref('images'),
                           lazy='dynamic')
     user_id = Column(Integer, ForeignKey('users.id'))
