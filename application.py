@@ -31,6 +31,16 @@ APPLICATION_NAME = "Image Board"
 def showLogin():
     """ Login route and controller.  Sets state token to prevent
         forgery.
+
+        Args:
+            None
+
+        Returns:
+            login.html Template.  The following variable are passed to the
+            template:
+                - state:  The state key
+                - login_session:  Login session object
+                - referrer:  The page the user is coming from
     """
 
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
@@ -44,6 +54,16 @@ def showLogin():
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     """ Authenticate via Google's OAuth2 service.
+
+        Args:
+            None
+
+        Returns:
+            auth_results.html template.  The following object is passed to
+            the template:
+                - login_session: Login session object
+            response (if unsuccessful):  http response
+
     """
 
     # Validate state token
@@ -135,6 +155,15 @@ def gconnect():
 @app.route('/fbconnect', methods=['POST'])
 def fbconnect():
     """ Authenticate via Facebook's OAuth2 service
+
+        Args:
+            None
+
+        Returns:
+            auth_results.html template.  The following object is passed to
+            the template:
+                - login_session:  Login session object
+            response (if unsuccessful): http response
     """
 
     if request.args.get('state') != login_session['state']:
@@ -190,6 +219,12 @@ def fbconnect():
 @app.route('/fbdisconnect')
 def fbdisconnect():
     """ Asks Facebook to delete user's token.
+
+        Args:
+            None
+
+        Returns:
+            result:  result of the http delete
     """
 
     facebook_id = login_session['facebook_id']
@@ -206,6 +241,15 @@ def fbdisconnect():
 def home():
     """ Main landing page for catalog app.  Pulls all the images and
         displays them on the page.
+
+        Args:
+            None
+
+        Returns:
+            home.html template.  The following are passed into the
+            template as variables:
+                - images: the images object
+                - login_session:  Login session object
     """
 
     images = session.query(Image).all()
@@ -216,6 +260,12 @@ def home():
 @app.route('/images/JSON')
 def imagesJSON():
     """ JSON output for all the images
+
+        Args:
+            None
+
+        Returns:
+            JSON output for all images
     """
 
     images = session.query(Image).all()
@@ -225,6 +275,15 @@ def imagesJSON():
 @app.route('/tags/')
 def tags():
     """ A page displaying each tag
+
+        Args:
+            None
+
+        Returns:
+            tags.html template.  The following are passed into the
+            template as variables:
+                - tags:  tags object
+                - login_session:  Login session object
     """
 
     tags = session.query(Tags).all()
@@ -234,6 +293,12 @@ def tags():
 @app.route('/tags/JSON')
 def tagsJSON():
     """ A page displaying each tag
+
+        Args:
+            None
+
+        Returns:
+            JSON output for all tags
     """
 
     tags = session.query(Tags).all()
@@ -243,6 +308,16 @@ def tagsJSON():
 @app.route('/tag/<int:tag_id>/')
 def tag(tag_id):
     """ Tag page, showing all images for a tag
+
+        Args:
+            tag_id:  Integer, primary key of the tag
+
+        Returns:
+            tag.html.  The folloiwng are passed into the template
+            as variables:
+                - tag:  tag object
+                - images:  images object
+                - login_session:  Login session object
     """
 
     tag = session.query(Tags).filter_by(id=tag_id).one()
@@ -254,6 +329,12 @@ def tag(tag_id):
 @app.route('/tag/<int:tag_id>/JSON')
 def tagJSON(tag_id):
     """ Tag page, showing all images for a tag
+
+        Args:
+            tag_id:  Integer, primary key of the tag
+
+        Returns:
+            JSON output for the tag
     """
 
     tag = session.query(Tags).filter_by(id=tag_id).one()
@@ -263,6 +344,16 @@ def tagJSON(tag_id):
 @app.route('/image/<int:image_id>/')
 def image(image_id):
     """ Main page for an individual image
+
+        Args:
+            image_id:  Integer, primary key of the image
+
+        Returns:
+            image.html.  The folloiwng are passed into the template
+            as variables:
+                - image:  The image object
+                - tags:  The tags object
+                - login_session:  The login session object
     """
 
     image = session.query(Image).filter_by(id=image_id).one()
@@ -274,6 +365,12 @@ def image(image_id):
 @app.route('/image/<int:image_id>/JSON')
 def imageJSON(image_id):
     """ Main page for an individual image
+
+        Args:
+            image_id:  Integer, primary key of the image
+
+        Returns:
+            JSON output for the image
     """
 
     image = session.query(Image).filter_by(id=image_id).one()
@@ -283,6 +380,16 @@ def imageJSON(image_id):
 @app.route('/image/<int:image_id>/edit', methods=['GET', 'POST'])
 def editImage(image_id):
     """ Page for editing an image
+
+        Args:
+            image_id:  Integer, primary key of the image
+
+        Returns:
+            image.html.  The folloiwng are passed into the template
+            as variables:
+                - image:  The image object
+                - tags:  The tags object
+                - login_session:  The login session object
     """
 
     image = session.query(Image).filter_by(id=image_id).one()
@@ -327,6 +434,16 @@ def editImage(image_id):
 @app.route('/image/<int:image_id>/delete', methods=['GET', 'POST'])
 def deleteImage(image_id):
     """ Prompt to delete an image
+
+        Args:
+            image_id:  Integer, primary key of the image
+
+        Returns:
+            image.html.  The folloiwng are passed into the template
+            as variables:
+                - image:  The image object
+                - tags:  The tags object
+                - login_session:  The login session object
     """
 
     image = session.query(Image).filter_by(id=image_id).one()
@@ -345,6 +462,14 @@ def deleteImage(image_id):
 @app.route('/images/new', methods=['GET', 'POST'])
 def newImage():
     """ Create new image
+
+        Args:
+            None
+
+        Returns:
+            new_image.html template.  The following are passed to the
+            template as variables:
+                - login_session:  The login session object
     """
 
     if request.method == 'POST':
@@ -382,6 +507,12 @@ def disconnect():
     """ Universal disconnect.  Determine the provider the user
         used to login with, then call that providers's disconnect
         function.
+
+        Args:
+            None
+
+        Returns:
+            redirects to the home page
     """
 
     if 'provider' in login_session:
@@ -415,8 +546,10 @@ def disconnect():
 def createUser(login_session):
     """ If a user logs in for the first time, create their user in the DB
 
-        Input - object - login_sesion
-        Returns - user.id
+        Args:
+            login_sesion:  Login session object
+        Returns
+            user.id:  Integer:  The primary key of the user
     """
 
     newUser = Users(name=login_session['username'], email=login_session[
@@ -430,8 +563,11 @@ def createUser(login_session):
 def getUserInfo(user_id):
     """ Get the user info for a user_id
 
-        Input - Integer, user_id
-        Returns - Object, user
+        Args:
+            user_id: Integer, the user primary key
+
+        Returns:
+            user - The user object
     """
 
     user = session.query(Users).filter_by(id=user_id).one()
@@ -441,6 +577,15 @@ def getUserInfo(user_id):
 def getUserID(email):
     """ Queries the DB for the user by e-mail.  If user exists,
         returns user.id.  Else, returns "None".
+
+        Args:
+            email:  String - The user's e-mail
+
+        Returns:
+            If user exists in DB:
+                user.id:  Integer, the primary key of the user.
+            Else:
+                None
     """
 
     try:
@@ -455,6 +600,12 @@ def getUserID(email):
 @app.route('/gdisconnect')
 def gdisconnect():
     """ Disconnect from google (revoke user token)
+
+        Args:
+            None
+
+        Returns:
+            response:  The http response
     """
 
     # Only disconnect a connected user.
