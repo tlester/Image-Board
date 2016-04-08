@@ -100,3 +100,6 @@ cd catalog
 python application.py
 ```
 
+## Contact info
+Name:  Tom Lester
+email: tom@tomlester.com
