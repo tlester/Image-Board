@@ -1,4 +1,4 @@
-# Image Board [![Build Status](https://travis-ci.org/tlester/catalog.svg?branch=master)](https://travis-ci.org/tlester/catalog)
+# Image Board [![Build Status](https://travis-ci.org/tlester/Image-Board.svg?branch=master)](https://travis-ci.org/tlester/Image-Board)
 
 Image Board is a catalog of images that represent items.   Like a traditional
 catalog, items can be viewed by categories.  In this case, categories are
